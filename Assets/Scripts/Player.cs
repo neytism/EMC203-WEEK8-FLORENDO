@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 public class Player : MonoBehaviour
 {
     public Transform[] lanes;
+    public Animator _anim;
 
     private int currentLane = 1; // Start in the middle lane
     private bool isJumping = false;
@@ -57,6 +58,7 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && !isJumping && !isDucking)
         {
             isJumping = true;
+            _anim.SetBool("IsJumping",isJumping);
             _state = State.Jumping;
         }
 
@@ -64,6 +66,7 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.S) && !isJumping && !isDucking)
         {
             isDucking = true;
+            _anim.SetBool("IsDucking",isDucking);
             _state = State.Ducking;
         }
 
@@ -71,12 +74,14 @@ public class Player : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.Space) && isJumping)
         {
             isJumping = false;
+            _anim.SetBool("IsJumping",isJumping);
             _state = State.Running;
         }
         
         if (Input.GetKeyUp(KeyCode.S) && isDucking)
         {
             isDucking = false;
+            _anim.SetBool("IsDucking",isDucking);
             _state = State.Running;
         }
     }

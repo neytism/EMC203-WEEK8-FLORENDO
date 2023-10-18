@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Item : MonoBehaviour
 {
+    public float speed = 0.01f; 
+    public float acceleration = 0.001f;
     public Vector3 itemPosition;
     private CameraComponent cameraComponent;
     private void Awake()
@@ -13,32 +15,40 @@ public class Item : MonoBehaviour
 
     private void Update()
     {
-        // Calculate the perspective
         var perspective = cameraComponent.focalLength / (cameraComponent.focalLength + itemPosition.z);
     
-        // Modify the perspective using a square function to make the scaling increase faster as the object gets bigger
-        perspective = Mathf.Pow(1 - perspective, 2);
+        perspective = Mathf.Pow(1 - perspective, 3f);
     
         var position = cameraComponent.vanishingPoint.position;
     
         Vector3 offset = itemPosition - position;
     
-        // Use the modified perspective for the scale
         transform.localScale = Vector3.one * perspective;
         
-        // Adjust z value based on scale
         float adjustedZ = position.z - transform.localScale.x;
     
         transform.position = new Vector3(position.x + offset.x * perspective, position.y + offset.y * perspective, adjustedZ);
     }
-
-
-    private Color GetRandomColor()
+    
+    
+    private void OnEnable()
     {
-        var rRand = Random.Range(0f, 1f);
-        var gRand = Random.Range(0f, 1f);
-        var bRand = Random.Range(0f, 1f);
-        return new Color(rRand, gRand, bRand);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+       StartCoroutine(BulletLife());
+       }
+
+    IEnumerator BulletLife()
+    {
+        yield return new WaitForSeconds(5f);
+        gameObject.SetActive(false);
+        
+
+    }
+
+    public void ResetItem()
+    {
+        speed = 0f;
+        itemPosition = Vector3.zero;
+        transform.localScale = Vector3.zero;
     }
 
 

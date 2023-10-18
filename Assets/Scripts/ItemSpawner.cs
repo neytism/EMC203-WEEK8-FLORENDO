@@ -2,15 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 public class ItemSpawner : MonoBehaviour
 {
-    public Item itemToSpawn;
-    public float speed = 0.01f;
+    public List<Item> itemsPrefab;
     public List<Item> items = new List<Item>();
     public Transform parent;
     public List<Transform> points;
+    public float repeatRate = 1f;
 
     private void Start()
     {
@@ -19,9 +18,17 @@ public class ItemSpawner : MonoBehaviour
 
     private void BeginSpawn()
     {
-        var spawnedItem = Instantiate(itemToSpawn, parent);
+        GameObject obj = ObjectPool.Instance.PoolObject(itemsPrefab[Random.Range(0, itemsPrefab.Count)].gameObject, Vector3.zero);
+        //var spawnedItem = Instantiate(itemToSpawn);
+        obj.SetActive(true);
+        var spawnedItem = obj.GetComponent<Item>();
+        spawnedItem.ResetItem();
         spawnedItem.itemPosition = GetRandomLocation();
-        items.Add(spawnedItem);
+        
+        if (!items.Contains(spawnedItem))
+        {
+            items.Add(spawnedItem);
+        }
     }
 
     private Vector3 GetRandomLocation()
@@ -56,8 +63,8 @@ public class ItemSpawner : MonoBehaviour
 
     private void ItemMover(Item item)
     {
-        item.itemPosition.z += speed;
+        item.speed += item.acceleration;
+        item.itemPosition.z += item.speed; 
     }
-
 
 }
