@@ -19,6 +19,8 @@ public class StarsSpawner : MonoBehaviour
 
     private void BeginSpawn()
     {
+        if (Player.IsDead) return;
+        
         GameObject obj = ObjectPool.Instance.PoolObject(itemToSpawn.gameObject, Vector3.zero);
         //var spawnedItem = Instantiate(itemToSpawn);
         obj.SetActive(true);

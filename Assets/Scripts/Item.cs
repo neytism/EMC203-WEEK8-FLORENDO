@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class Item : MonoBehaviour
 {
+    public float secondsBeforeDeactivate = 5f;
+    public int lanePosition;
     public float speed = 0.01f; 
     public float acceleration = 0.001f;
     public Vector3 itemPosition;
     private CameraComponent cameraComponent;
+    
     private void Awake()
     {
         cameraComponent = FindObjectOfType<CameraComponent>();
@@ -15,6 +18,8 @@ public class Item : MonoBehaviour
 
     private void Update()
     {
+        if (Player.IsDead) return;
+        
         var perspective = cameraComponent.focalLength / (cameraComponent.focalLength + itemPosition.z);
     
         perspective = Mathf.Pow(1 - perspective, 3f);
@@ -33,12 +38,12 @@ public class Item : MonoBehaviour
     
     private void OnEnable()
     {
-       StartCoroutine(BulletLife());
-       }
+       StartCoroutine(SecondBeforeDeactivate());
+    }
 
-    IEnumerator BulletLife()
+    IEnumerator SecondBeforeDeactivate()
     {
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(secondsBeforeDeactivate);
         gameObject.SetActive(false);
         
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,12 +10,30 @@ public class Player : MonoBehaviour
     public Animator _anim;
 
     private int currentLane = 1; // Start in the middle lane
+
+    public int CurrentLane => currentLane;
+
     private bool isJumping = false;
     private bool isDucking = false;
     private Vector3 targetPosition;
 
+    private static bool _isDead = false;
+    public static bool IsDead => _isDead;
+
     private State _state;
-    
+
+    public State GetState => _state;
+
+    private void OnEnable()
+    {
+        Obstacle.Hit += Death;
+    }
+
+    private void OnDisable()
+    {
+        Obstacle.Hit -= Death;
+    }
+
     public enum State
     {
         Running,
@@ -32,12 +51,12 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-       Debug.Log(_state);
-       Move();
+        Move();
     }
 
     private void Move()
     {
+        if (_isDead) return;
         transform.position = Vector3.Lerp(transform.position, targetPosition, 0.3f);
         
         // Move left
@@ -73,9 +92,9 @@ public class Player : MonoBehaviour
         // Return to normal position after jumping or ducking
         if (Input.GetKeyUp(KeyCode.Space) && isJumping)
         {
-            isJumping = false;
-            _anim.SetBool("IsJumping",isJumping);
-            _state = State.Running;
+            _anim.SetBool("IsJumping",false);
+
+            StartCoroutine(JumpDelay());
         }
         
         if (Input.GetKeyUp(KeyCode.S) && isDucking)
@@ -84,5 +103,28 @@ public class Player : MonoBehaviour
             _anim.SetBool("IsDucking",isDucking);
             _state = State.Running;
         }
+    }
+
+    private void Death()
+    {
+        _anim.SetTrigger("Death");
+        StartCoroutine(DeathDelay());
+
+    }
+    
+
+    IEnumerator JumpDelay()
+    {
+        yield return new WaitForSeconds(1f);
+        isJumping = false;
+        _state = State.Running;
+    }
+    
+    IEnumerator DeathDelay()
+    {
+        yield return new WaitForSeconds(1f);
+        _isDead = true;
+        Time.timeScale = 0f;
+        //game over here
     }
 }

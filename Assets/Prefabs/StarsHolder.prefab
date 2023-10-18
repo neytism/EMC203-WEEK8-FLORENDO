@@ -129,6 +129,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e42eed9c95190db44891b14e32d5b27f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  secondsBeforeDeactivate: 5
+  lanePosition: 0
   speed: 0
   acceleration: 0.01
   itemPosition: {x: 0, y: 0, z: 0}
